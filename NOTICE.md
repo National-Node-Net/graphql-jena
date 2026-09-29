@@ -11,7 +11,7 @@ This product is now maintained and further developed as GraphQL Jena
 by the National Digital Twin Programme.
 
 Copyright (C) 2024 Telicent Ltd     
-© Crown Copyright 2025. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 ## License
 This repository contains both source code and documentation, which are covered by different licenses:

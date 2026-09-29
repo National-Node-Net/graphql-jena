@@ -34,10 +34,10 @@ updates:
           - "minor"
           - "patch"
     open-pull-requests-limit: 10
+  # target-branch intentionally omitted: action updates target main (auto-merged) and are back-merged to develop.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule: 
       interval: weekly
       day: monday
-    target-branch: develop
     open-pull-requests-limit: 5
