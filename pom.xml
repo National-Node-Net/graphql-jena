@@ -100,7 +100,7 @@ Modifications made by the National Digital Twin Programme (NDTP)
 
         <!-- Dependency Versions -->
         <dependency.airline>3.0.0</dependency.airline>
-        <dependency.graphql>22.3</dependency.graphql>
+        <dependency.graphql>24.2</dependency.graphql>
         <dependency.jena>5.2.0</dependency.jena>
         <dependency.jackson>2.18.3</dependency.jackson>
         <dependency.jersey>3.1.10</dependency.jersey>
