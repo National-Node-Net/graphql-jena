@@ -91,7 +91,8 @@ jobs:
             const metadata = {
               repository: {
                 defaultBranch: process.env.DEFAULT_BRANCH,
-                hasDevelopBranch: hasDevelopBranch
+                hasDevelopBranch: hasDevelopBranch,
+                repositoryName: repo,
               }
             };
 
@@ -133,7 +134,15 @@ jobs:
             -p ospo-resources/tools/policy-as-code/policy \
             --data repository-metadata.json \
             --namespace github.dependabot \
-            --output json > policy-report.json || true
+            --output json > dependabot-policy-report.json || true
+          # Enforce GitFlow branch requirements independently of Dependabot configuration.
+          conftest test repository-metadata.json \
+            -p ospo-resources/tools/policy-as-code/policy \
+            --data repository-metadata.json \
+            --namespace github.repository \
+            --output json > repository-policy-report.json || true
+          # Preserve failures from both policy namespaces in the existing summary.
+          jq -s 'add' dependabot-policy-report.json repository-policy-report.json > policy-report.json
 
       - name: Process Policy Results
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0

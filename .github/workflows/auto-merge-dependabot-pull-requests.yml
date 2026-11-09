@@ -4,7 +4,7 @@
 
 # Prerequisites:
 # - Configure Dependabot for the github-actions ecosystem in .github/dependabot.yml.
-# - Enable "Allow auto-merge" and "Allow squash merging" in repository settings.
+# - Enable "Allow auto-merge" and "Allow merge commits" in repository settings.
 # - Grant access to the OSPO GitHub App for this repository with Contents and Pull requests
 #   permissions set to Read and write, and approve any installation permission updates.
 # - Provide OSPO_WORKFLOW_APP_ID and OSPO_WORKFLOW_PRIVATE_KEY as Dependabot secrets
@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
         with:
           github-token: ${{ github.token }}
 
@@ -85,9 +85,9 @@ jobs:
         run: gh pr review "$PR_NUMBER" --approve
 
       # GitHub waits for required checks and any remaining review requirements.
-      # No ruleset bypass is needed for a standard one-approval requirement.
+      # GitFlow main rules require merge commits rather than squash merges.
       - name: Enable auto-merge for the pull request
         if: steps.metadata.outputs.package-ecosystem == 'github_actions' && steps.repository.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ steps.target_token.outputs.token }}
-        run: gh pr merge "$PR_NUMBER" --auto --squash --match-head-commit "$HEAD_SHA"
+        run: gh pr merge "$PR_NUMBER" --auto --merge --match-head-commit "$HEAD_SHA"
