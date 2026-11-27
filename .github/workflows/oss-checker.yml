@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Fetch GitHub App token for target repo
         id: target_token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           app-id: ${{ secrets.OSPO_WORKFLOW_APP_ID }}
           private-key: ${{ secrets.OSPO_WORKFLOW_PRIVATE_KEY }}
@@ -38,7 +38,7 @@ jobs:
 
       - name: Fetch GitHub App token for OSPO source repo (read-only)
         id: ospo_token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           app-id: ${{ secrets.OSPO_WORKFLOW_APP_ID }}
           private-key: ${{ secrets.OSPO_WORKFLOW_PRIVATE_KEY }}
@@ -91,7 +91,8 @@ jobs:
             const metadata = {
               repository: {
                 defaultBranch: process.env.DEFAULT_BRANCH,
-                hasDevelopBranch: hasDevelopBranch
+                hasDevelopBranch: hasDevelopBranch,
+                repositoryName: repo,
               }
             };
 
@@ -133,7 +134,15 @@ jobs:
             -p ospo-resources/tools/policy-as-code/policy \
             --data repository-metadata.json \
             --namespace github.dependabot \
-            --output json > policy-report.json || true
+            --output json > dependabot-policy-report.json || true
+          # Enforce GitFlow branch requirements independently of Dependabot configuration.
+          conftest test repository-metadata.json \
+            -p ospo-resources/tools/policy-as-code/policy \
+            --data repository-metadata.json \
+            --namespace github.repository \
+            --output json > repository-policy-report.json || true
+          # Preserve failures from both policy namespaces in the existing summary.
+          jq -s 'add' dependabot-policy-report.json repository-policy-report.json > policy-report.json
 
       - name: Process Policy Results
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -470,7 +479,7 @@ jobs:
 
       - name: Upload OSS result artifacts
         if: ${{ steps.summarise_results.outputs.hasResults == 'true' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: oss-checks-${{ github.run_id }}
           retention-days: 30
